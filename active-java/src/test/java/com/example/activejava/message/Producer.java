@@ -11,7 +11,7 @@ import javax.jms.*;
  */
 public class Producer {
 
-    private static final String ACTIVE_URL = "tcp://192.168.0.110:61616";
+    private static final String ACTIVE_URL = "tcp://localhost:61608";
 
     public static void main(String[] args) throws JMSException {
         //创建连接工厂
@@ -23,17 +23,14 @@ public class Producer {
         //创建回话对象(第一个参数是是否开启事务,第二参数是签收)
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         //创建队列
-        Queue queue = session.createQueue("queue01");
+        Queue queue = session.createQueue("windows-queue-nio");
         //创建消息生产者并设置目的地
         MessageProducer producer = session.createProducer(queue);
         //将消息发送到队列中
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i < 5; i++) {
             //创建消息
             MapMessage message = session.createMapMessage();
-            message.setString("name", "Jack");
-            if (i == 2) {
-                message.setStringProperty("property", "指定的消息属性!!!!");
-            }
+            message.setString("name", "Well" + i);
             //将消息发送到队列
             producer.send(message);
         }

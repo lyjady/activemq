@@ -14,7 +14,7 @@ import javax.jms.*;
  */
 public class Consumers {
 
-    private static final String ACTIVE_URL = "tcp://192.168.0.110:61616";
+    private static final String ACTIVE_URL = "nio://localhost:61618";
 
     private static Logger logger = LoggerFactory.getLogger(Consumers.class);
 
@@ -29,7 +29,7 @@ public class Consumers {
         //创建回话对象(第一个参数是是否开启事务,第二参数是签收)
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         //设置目的地队列
-        Queue queue = session.createQueue("queue01");
+        Queue queue = session.createQueue("windows-queue-nio");
         //设置消费者
         MessageConsumer consumer = session.createConsumer(queue);
         //接受消息
