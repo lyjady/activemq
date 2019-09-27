@@ -12,21 +12,18 @@ import java.io.IOException;
  */
 public class TopicConsumer {
 
-    private static final String ACTIVE_URL = "tcp://192.168.0.110:61616";
+    private static final String ACTIVE_URL = "tcp://192.168.0.108:61616";
 
     public static void main(String[] args) throws JMSException, IOException {
         System.out.println("第二个监听者开始监听");
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(ACTIVE_URL);
-        Connection connection = null;
-        Session session = null;
-        MessageConsumer consumer = null;
-
-        connection = factory.createConnection();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Connection connection = factory.createConnection();
+        connection.setClientID("jdbcId");
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Topic topic = session.createTopic("jdbc-topic");
+        TopicSubscriber durableSubscriber = session.createDurableSubscriber(topic, "topic-jdbc-info");
         connection.start();
-        Topic topic = session.createTopic("topic01");
-        consumer = session.createConsumer(topic);
-        consumer.setMessageListener(message -> {
+        durableSubscriber.setMessageListener(message -> {
             if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage) message;
                 try {
@@ -37,7 +34,7 @@ public class TopicConsumer {
             }
         });
         System.in.read();
-        consumer.close();
+        durableSubscriber.close();
         session.close();
         connection.close();
     }
